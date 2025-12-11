@@ -4,7 +4,7 @@ option csharp_namespace = "TicTacToeService";
 
 package game;
 
-service Game {
+service GameService {
   rpc Subscribe (SubscribeRequest) returns (stream GameUpdate);
   rpc MakeMove (MoveRequest) returns (MoveResponse);
 }
@@ -33,12 +33,20 @@ message MoveInfo {
   int32 row = 1;
   int32 col = 2;
   Role move_initiator = 3;
+  Winner winner = 4; // Is set when game ends
 }
 
 enum Role {
   ROLE_UNKNOWN = 0;
   ROLE_X = 1;
   ROLE_O = 2;
+}
+
+enum Winner {
+  WINNER_UNKNOWN = 0;
+  WINNER_X = 1;
+  WINNER_O = 2;
+  WINNER_TIE = 3;
 }
 
 enum GameEventType {

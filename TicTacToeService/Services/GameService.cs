@@ -1,14 +1,19 @@
 using Grpc.Core;
+using TicTacToeService.Services.RoomManager;
 
 namespace TicTacToeService.Services;
 
-public class GameService : TicTacToeService.GameService.GameServiceBase
+public class GameService(IRoomManager manager) : TicTacToeService.GameService.GameServiceBase
 {
     public override async Task Subscribe(SubscribeRequest request, 
         IServerStreamWriter<GameUpdate> responseStream,
         ServerCallContext context)
     {
-        await base.Subscribe(request, responseStream, context);
+        // On connection
+
+        context.CancellationToken.WaitHandle.WaitOne();
+        
+        // Post-connection cleanup
     }
 
     public override async Task<MoveResponse> MakeMove(MoveRequest request,
