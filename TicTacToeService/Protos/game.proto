@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option csharp_namespace = "TicTacToeService";
+
+package game;
+
+service Game {
+  rpc Subscribe (SubscribeRequest) returns (stream GameUpdate);
+  rpc MakeMove (MoveRequest) returns (MoveResponse);
+}
+
+message SubscribeRequest {
+}
+
+message GameUpdate {
+  string player_token = 1; // Returned to player on their connect => player's unique id
+  Role assigned_role = 2; // Returned to player on their connect => player's role (X or O)
+  GameEventType game_event = 3; // Returned upon game state changing
+  MoveInfo move_info = 4; // Returned when any player made a move
+}
+
+message MoveRequest {
+  string player_token = 1; 
+  int32 row = 2;
+  int32 col = 3;
+}
+
+message MoveResponse {
+  bool accepted = 1;
+}
+
+message MoveInfo {
+  int32 row = 1;
+  int32 col = 2;
+  Role move_initiator = 3;
+}
+
+enum Role {
+  ROLE_UNKNOWN = 0;
+  ROLE_X = 1;
+  ROLE_O = 2;
+}
+
+enum GameEventType {
+  EVENT_UNKNOWN = 0;
+  PLAYER_JOINED = 1;
+  GAME_STARTED = 2;
+  MOVE_MADE = 3;
+  GAME_FINISHED = 4;
+  GAME_INTERRUPTED = 5; // When other player has lost connection
+}
