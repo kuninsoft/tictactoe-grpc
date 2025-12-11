@@ -1,6 +1,6 @@
 using Grpc.Core;
 
-namespace TicTacToeService.Services.RoomManager.Models;
+namespace TicTacToeService.Models;
 
 public class Room
 {

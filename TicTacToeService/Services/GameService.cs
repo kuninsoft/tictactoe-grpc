@@ -1,9 +1,11 @@
 using Grpc.Core;
-using TicTacToeService.Services.RoomManager;
+using TicTacToeService.GameManager;
+using TicTacToeService.RoomManager;
 
 namespace TicTacToeService.Services;
 
-public class GameService(IRoomManager manager) : TicTacToeService.GameService.GameServiceBase
+public class GameService(IRoomManager roomManager, IGameManager gameManager)
+    : TicTacToeService.GameService.GameServiceBase
 {
     public override async Task Subscribe(SubscribeRequest request, 
         IServerStreamWriter<GameUpdate> responseStream,

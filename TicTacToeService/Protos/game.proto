@@ -17,6 +17,7 @@ message GameUpdate {
   Role assigned_role = 2; // Returned to player on their connect => player's role (X or O)
   GameEventType game_event = 3; // Returned upon game state changing
   MoveInfo move_info = 4; // Returned when any player made a move
+  Role next_turn = 5; // Whose next turn it is
 }
 
 message MoveRequest {
@@ -54,6 +55,4 @@ enum GameEventType {
   PLAYER_JOINED = 1;
   GAME_STARTED = 2;
   MOVE_MADE = 3;
-  GAME_FINISHED = 4;
-  GAME_INTERRUPTED = 5; // When other player has lost connection
 }

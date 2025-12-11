@@ -1,7 +1,7 @@
 using Grpc.Core;
-using TicTacToeService.Services.RoomManager.Models;
+using TicTacToeService.Models;
 
-namespace TicTacToeService.Services.RoomManager;
+namespace TicTacToeService.RoomManager;
 
 public interface IRoomManager
 {
