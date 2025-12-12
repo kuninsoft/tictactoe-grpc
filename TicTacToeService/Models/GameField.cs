@@ -9,9 +9,19 @@ public class GameField
         [Cell.None, Cell.None, Cell.None]
     ];
 
+    public CellMove CurrentTurn { get; private set; } = CellMove.X;
+
+    public bool IsMoveValid(int row, int col, CellMove move)
+    {
+        return CurrentTurn == move && _field[row][col] is Cell.None;
+    }
+
     public GameState MakeMove(int row, int col, CellMove move)
     {
         SetCell(row, col, move);
+        
+        ToggleTurn();
+        
         return CheckBoard();
     }
 
@@ -22,6 +32,16 @@ public class GameField
             CellMove.X => Cell.X,
             CellMove.O => Cell.O,
             _ => throw new ArgumentException("Move is invalid, must be either X or O", nameof(move))
+        };
+    }
+
+    private void ToggleTurn()
+    {
+        CurrentTurn = CurrentTurn switch
+        {
+            CellMove.X => CellMove.O,
+            CellMove.O => CellMove.X,
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 

@@ -25,6 +25,12 @@ public class RoomManager : IRoomManager
         return room.AddPlayer(playerStream);
     }
 
+    public Room FindRoomWithPlayer(string playerId)
+    {
+        return _rooms.FirstOrDefault(room => room.HasPlayer(playerId))
+               ?? throw new InvalidOperationException("No room with such player id exists");
+    }
+
     public async Task NotifyRoomWithPlayer(string playerId, GameUpdate update)
     {
         if (_rooms.FirstOrDefault(room => room.HasPlayer(playerId)) is {} foundRoom)
@@ -33,13 +39,25 @@ public class RoomManager : IRoomManager
         }
     }
 
-    public Task CleanUp(string playerId)
+    public void CleanUp(Room room)
     {
-        if (_rooms.FirstOrDefault(room => room.HasPlayer(playerId)) is {} roomToDelete)
-        {
-            _rooms.Remove(roomToDelete);
-        }
+        _rooms.Remove(room);
+    }
 
-        return Task.CompletedTask;
+    public async Task CleanUpOnClientDisconnect(string playerId)
+    {
+        if (_rooms.FirstOrDefault(room => room.HasPlayer(playerId)) is { } foundRoom)
+        {
+            try
+            {
+                await foundRoom.TryNotifyOther(playerId,
+                    new GameUpdate {GameEvent = GameEventType.GameInterrupted});
+                foundRoom.CloseConnections();
+            }
+            finally
+            {
+                CleanUp(foundRoom);
+            }
+        }
     }
 }

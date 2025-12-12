@@ -1,5 +1,6 @@
 using Grpc.Core;
 using TicTacToeService.GameManager;
+using TicTacToeService.Models;
 using TicTacToeService.RoomManager;
 
 namespace TicTacToeService.Services;
@@ -11,16 +12,28 @@ public class GameService(IRoomManager roomManager, IGameManager gameManager)
         IServerStreamWriter<GameUpdate> responseStream,
         ServerCallContext context)
     {
-        // On connection
+        Player player = roomManager.JoinGame(responseStream);
 
-        context.CancellationToken.WaitHandle.WaitOne();
+        roomManager.CanStartGame += (_, room) => gameManager.SetUpGame(room);
+
+        await player.NotifyOnConnection();
         
-        // Post-connection cleanup
+        Task clientDisconnectTask = Task.Run(() =>
+        {
+            context.CancellationToken.WaitHandle.WaitOne();
+        });
+
+        Task finishedTask = await Task.WhenAny(clientDisconnectTask, player.RequestDisconnectSource.Task);
+
+        if (finishedTask == clientDisconnectTask) // If client disconnected first (lost internet, closed tab)
+        {
+            await roomManager.CleanUpOnClientDisconnect(player.Id);
+        }
     }
 
-    public override async Task<MoveResponse> MakeMove(MoveRequest request,
+    public override Task<MoveResponse> MakeMove(MoveRequest request,
         ServerCallContext context)
     {
-        await base.MakeMove(request, context);
+        return gameManager.MakeMove(request);
     }
 }

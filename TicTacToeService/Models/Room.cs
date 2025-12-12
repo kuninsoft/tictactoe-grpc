@@ -30,11 +30,46 @@ public class Room
         return _players.Any(player => player.Id == id);
     }
 
+    public CellMove GetPlayerRole(string id)
+    {
+        if (_players.FirstOrDefault(player => player.Id == id) is not { } foundPlayer)
+        {
+            throw new InvalidOperationException("Such player does not exist in the room");
+        }
+
+        return foundPlayer.Role is Role.X ? CellMove.X : CellMove.O;
+    }
+
     public async Task NotifyAll(GameUpdate update)
     {
         foreach (Player player in _players)
         {
             await player.Notify(update);
+        }
+    }
+
+    public async Task<bool> TryNotifyOther(string id, GameUpdate update)
+    {
+        try
+        {
+            if (_players.FirstOrDefault(player => player.Id != id) is { } foundPlayer)
+            {
+                await foundPlayer.Notify(update);
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public void CloseConnections()
+    {
+        foreach (Player player in _players)
+        {
+            player.CloseConnection();
         }
     }
 }

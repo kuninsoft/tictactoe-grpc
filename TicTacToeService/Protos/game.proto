@@ -55,4 +55,5 @@ enum GameEventType {
   PLAYER_JOINED = 1;
   GAME_STARTED = 2;
   MOVE_MADE = 3;
+  GAME_INTERRUPTED = 4;
 }
