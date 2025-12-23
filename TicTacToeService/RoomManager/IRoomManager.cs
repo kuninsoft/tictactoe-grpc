@@ -14,7 +14,7 @@ public interface IRoomManager
     /// Wrap connection stream in a Player object, assign a room and role
     /// </summary>
     /// <returns>Player object with assigned role</returns>
-    Player JoinGame(IServerStreamWriter<GameUpdate> playerStream);
+    Task<Player> JoinGame(IServerStreamWriter<GameUpdate> playerStream);
     
     /// <summary>
     /// Get room with specific player

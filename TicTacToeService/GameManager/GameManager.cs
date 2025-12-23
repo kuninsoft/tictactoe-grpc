@@ -7,18 +7,14 @@ public class GameManager(IRoomManager roomManager) : IGameManager
 {
     private readonly Dictionary<Room, GameField> _roomsFields = new();
 
-    public async Task SetUpGame(Room room)
+    public Task SetUpGame(Room room)
     {
         if (!_roomsFields.ContainsKey(room))
         {
             _roomsFields[room] = new GameField();
         }
 
-        await room.NotifyAll(new GameUpdate
-        {
-            GameEvent = GameEventType.GameStarted,
-            NextTurn = _roomsFields[room].CurrentTurn is CellMove.X ? Role.X : Role.O
-        });
+        return Task.CompletedTask;
     }
 
     public async Task<MoveResponse> MakeMove(MoveRequest moveRequest)

@@ -6,8 +6,6 @@ public class Room
 {
     private readonly List<Player> _players = [];
     
-    public Guid RoomId { get; } = Guid.NewGuid();
-
     public int PlayerCount => _players.Count;
 
     public Player AddPlayer(IServerStreamWriter<GameUpdate> playerStream)

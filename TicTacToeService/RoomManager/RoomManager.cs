@@ -9,11 +9,19 @@ public class RoomManager : IRoomManager
     
     private readonly List<Room> _rooms = [];
 
-    public Player JoinGame(IServerStreamWriter<GameUpdate> playerStream)
+    public async Task<Player> JoinGame(IServerStreamWriter<GameUpdate> playerStream)
     {
         if (_rooms.FirstOrDefault(room => room.PlayerCount < 2) is {} vacantRoom)
         {
             Player secondPlayer = vacantRoom.AddPlayer(playerStream);
+
+            await secondPlayer.NotifyOnConnection();
+            
+            await vacantRoom.NotifyAll(new GameUpdate
+            {
+                GameEvent = GameEventType.GameStarted,
+                NextTurn = Role.X
+            });
 
             CanStartGame?.Invoke(this, vacantRoom);
             
@@ -21,8 +29,14 @@ public class RoomManager : IRoomManager
         }
 
         var room = new Room();
+        
         _rooms.Add(room);
-        return room.AddPlayer(playerStream);
+        
+        Player player = room.AddPlayer(playerStream);
+
+        await player.NotifyOnConnection();
+
+        return player;
     }
 
     public Room FindRoomWithPlayer(string playerId)
