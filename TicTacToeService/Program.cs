@@ -10,14 +10,6 @@ builder.Services.AddGrpc();
 builder.Services.AddSingleton<IRoomManager, RoomManager>();
 builder.Services.AddSingleton<IGameManager, GameManager>();
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(8585, listenOptions =>
-    {
-        listenOptions.Protocols = HttpProtocols.Http2;
-    });
-});
-
 WebApplication app = builder.Build();
 
 app.MapGrpcService<GameService>();
