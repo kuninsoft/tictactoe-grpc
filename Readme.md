@@ -5,6 +5,8 @@ It is designed as a **transport-agnostic core service**, suitable for consumptio
 
 For browser-based clients, this service is intended to be consumed through a **Backend-for-Frontend (BFF)** layer (e.g. SignalR or WebSocket adapter), rather than directly via gRPC-Web.
 
+*The gRPC backend works flawlessly locally, but due to free-tier Azure App Service quotas and HTTP/2 limitations, full deployment was constrained.*
+
 ---
 
 ## Overview
