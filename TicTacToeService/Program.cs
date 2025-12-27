@@ -12,9 +12,9 @@ builder.Services.AddSingleton<IGameManager, GameManager>();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ConfigureEndpointDefaults(lo =>
+    options.ListenAnyIP(8585, listenOptions =>
     {
-        lo.Protocols = HttpProtocols.Http2;
+        listenOptions.Protocols = HttpProtocols.Http2;
     });
 });
 
